@@ -1,0 +1,9 @@
+.centered{
+    padding: 0;
+    margin: auto;
+    display: block;
+}
+body{
+    margin: 0;
+    background-color: coral;
+}
