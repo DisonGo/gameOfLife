@@ -43,12 +43,19 @@ function resizeBody(){
     document.body.style.width = aWidth + "px";
 }
 function switchBool(x){
-    if(x){
-        x = false
-    }else x = true
-    return x
+    return !x
 }
-
+function copyPartArr(arr) {
+    let newArr = []
+    for (let i = 0; i < arr.length; i++) {
+        let sub = []
+        for (let j = 0; j < arr[i].length; j++) {
+            sub.push(Particle.copy(arr[i][j]));
+        }
+        newArr.push(sub)
+    }
+    return newArr
+}
 // function transorm_obj_to_bin_vector(obj){
 //     let newVector [];
 //     let newSubVec [];

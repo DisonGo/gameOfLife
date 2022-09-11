@@ -3,12 +3,11 @@ const CONFIG = {
     sizeMulti: SIZE_MULTI,
     partConf:{
         size:{
-            w:10*SIZE_MULTI,
-            h:10*SIZE_MULTI
+            w: 10 * SIZE_MULTI,
+            h: 10 * SIZE_MULTI
         },
         color: "black",
         fill: {
-            on:true,
             color:"black"
         },
         border: {
@@ -18,19 +17,15 @@ const CONFIG = {
         },
         state:{
             alive:{
-                on:false,
-                fill:{
-                    on:true,
-                    color:"black"
-                }
+                fill: "black"
             },
             dead:{
-                on:true,
-                fill:{
-                    on:true,
-                    color:"white"
-                }
+                fill: "white"
             }
+        },
+        max: {
+            X: (aWidth-aWidth%(10*SIZE_MULTI)) / (10*SIZE_MULTI),
+            Y: (aHeight-aHeight%(10*SIZE_MULTI)) / (10*SIZE_MULTI)
         }
     },
     maxCount: (aHeight-aHeight%(10*SIZE_MULTI)) * (aWidth-aWidth%(10*SIZE_MULTI)) / (100*SIZE_MULTI),
@@ -54,8 +49,12 @@ svg.id = "svg"
 
 let background = deTwo.makeGroup()
 background.id = "Background"
+let started = false
 main.addEventListener('click',function(e){
-    start()
+    if (!started) {
+        started = switchBool(started)
+        start()
+    }
 })
 main.addEventListener('contextmenu',function(e){
     e.preventDefault()
@@ -65,10 +64,8 @@ function getRandomDec(min,max){
     return rnd - rnd%(10*CONFIG.sizeMulti)
 }
 function checkAlive(){
-    window.parts.forEach((sub)=>{
-        console.log( sub.filter((part)=>{
-            return part.state.alive.on
-          }));
+    window.parts.forEach((sub) => {
+        sub.filter((part)=>part.state.alive.on)
     })
 }
 function generateMap(){
@@ -100,18 +97,31 @@ function generateParts(num){
         }
         if(tryCount>num*10)break
     }
+    // window.parts[0][0].switchStateTo("A")
+    // window.parts[0][1].switchStateTo("A")
+    // window.parts[0][2].switchStateTo("A")
+    // window.parts[0][3].switchStateTo("A")
+}
+function loop(){
+    this.int = setInterval(()=>{
+        let copy = copyPartArr(window.parts)
+        copy.forEach((row, i) => row.forEach((part, j) => {
+            let around = part.cellsAround(copy)
+            if (part.aliveCheck()) {
+                if (!(around >= 2 && around <= 3)) {
+                    window.parts[i][j].switchStateTo("D")
+                }
+            } else {
+                if (around == 3) {
+                    window.parts[i][j].switchStateTo("A")
+                }
+            }
+        }))
+        copy = undefined
+    },1000/60)
 }
 function start(){
     generateMap()
-    generateParts(100)
-    function loop(){
-        this.int = setInterval(()=>{
-            window.parts.forEach(subArr=> {
-                subArr.forEach(part=>{
-                    part.tick()
-                })
-            });
-        },1000)
-    }
+    generateParts(400)
     loop()
 }

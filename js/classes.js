@@ -47,21 +47,19 @@ class Point{
 }
 class Particle{
     constructor(cords){
-        let conf = CONFIG.partConf
-        this.conf = conf
-        this.cords = new Point(cords.x,cords.y)
-        this.w = conf.size.w
-        this.h = conf.size.h
-        this.cords.x+=this.w/2
-        this.cords.y+=this.h/2
-        this.X = cords.x/CONFIG.sizeMulti/10 
-        this.Y = cords.y/CONFIG.sizeMulti/10
-        if(conf.state.alive.on) conf.fill = conf.state.alive.fill
-        else conf.fill = conf.state.dead.fill
-        this.state = conf.state
-        this.fill = conf.fill,
+        let conf    = CONFIG.partConf
+        this.conf   = conf
+        this.cords  = new Point(cords.x,cords.y)
+        this.w      = conf.size.w
+        this.h      = conf.size.h
+        this.cords.x+= this.w / 2
+        this.cords.y+= this.h / 2
+        this.X      = cords.x / CONFIG.sizeMulti / 10 
+        this.Y      = cords.y / CONFIG.sizeMulti / 10
+        this.state  = 0
+        this.fill   = conf.fill.color,
         this.border = conf.border
-        this.svg = null
+        this.svg    = null
     }
     createOn(ctx){
         let rect = ctx.makeRectangle(this.cords.x, this.cords.y, this.w, this.h)
@@ -76,61 +74,64 @@ class Particle{
     switchStateTo(state){
         switch (state) {
             case "A":
-                this.state.alive.on = true,
-                this.state.dead.on = false
-                this.fill = this.state.alive.fill
+                this.state = 1
+                this.fill = this.conf.state.alive.fill
+                this.refreshFill()
                 break;
             case "D":
-                this.state.alive.on = false,
-                this.state.dead.on = true
-                this.fill = this.state.dead.fill
+                this.state = 0
+                this.fill = this.conf.state.dead.fill
+                this.refreshFill()
                 break;
             default:
-                if(this.state.alive.on){
-                    this.switchStateTo("D")
-                }
-                else{
-                    this.switchStateTo("A")
-                }
+                this.switchStateTo(this.state ? "D" : "A");
                 break;
         }
         this.refreshFill()
     }
     outOfarr(x,y){
-        return (x<0||x>CONFIG.maxX-1||y<0||y>CONFIG.maxY-1)
+        return (x < 0 || x > CONFIG.maxX - 1 || y < 0 || y > CONFIG.maxY - 1)
     }
     aliveCheck(){
-        return this.state.alive.on
+        return this.state
     }
-    deadCheck(){
-        return this.state.dead.on
+    static checkState(x, y, arr) {
+        let maxX = arr[0].length
+        let maxY = arr.length
+        if (x >= maxX)
+            x = x % maxX
+        else if (x < 0)
+            x = maxX + x % maxX
+        if (y >= maxY)
+            y = y % maxY
+        else if (y < 0)
+            y = maxY + y % maxY
+        return arr[y][x].state
     }
-
-    tick(){
+    static copy(part) {
+        let part1 = new Particle(new Point(part.cords.x - 10, part.cords.y - 10))
+        part1.state  = part.state
+        part1.fill   = part.fill,
+        part1.border = part.border
+        part1.svg    = part.svg
+        return part1
+    }
+    cellsAround(arr){
         let aliveCount = 0
-        for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < 3; j++) {
-                let x = this.X + j - 1
-                let y = this.Y + i - 1
-                if(!this.outOfarr(x,y)){
-                    const arr = window.parts
-                    const selecElem = arr[y][x]
-                    // console.log(x,y);
-                    if(selecElem.aliveCheck()){
-                        aliveCount++
-                    }
-                }
-            }
-        }
-        if(this.aliveCheck()){
-            if(aliveCount == 2 || aliveCount == 3)return
-            else this.switchStateTo("D")
-        }else{
-            if(aliveCount == 3)this.switchStateTo("A")
-            else return 
-        }
+        let x = this.X
+        let y = this.Y
+        aliveCount = 
+            Particle.checkState(x - 1,  y - 1, arr) +
+            Particle.checkState(x,      y - 1, arr) +
+            Particle.checkState(x + 1,  y - 1, arr) +
+            Particle.checkState(x - 1,  y    , arr) +
+            Particle.checkState(x + 1,  y    , arr) +
+            Particle.checkState(x - 1,  y + 1, arr) +
+            Particle.checkState(x,      y + 1, arr) +
+            Particle.checkState(x + 1,  y + 1, arr);
+        return aliveCount
     }
     refreshFill(){
-        this.svg.fill = this.fill.color
+        this.svg.fill = this.fill
     }
 }
