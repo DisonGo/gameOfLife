@@ -89,7 +89,7 @@ class Particle{
         }
         this.refreshFill()
     }
-    outOfarr(x,y){
+    outOfArr(x,y){
         return (x < 0 || x > CONFIG.maxX - 1 || y < 0 || y > CONFIG.maxY - 1)
     }
     aliveCheck(){
@@ -109,12 +109,12 @@ class Particle{
         return arr[y][x].state
     }
     static copy(part) {
-        let part1 = new Particle(new Point(part.cords.x - 10, part.cords.y - 10))
-        part1.state  = part.state
-        part1.fill   = part.fill,
-        part1.border = part.border
-        part1.svg    = part.svg
-        return part1
+        let copy = new Particle(new Point(part.cords.x - 10, part.cords.y - 10))
+        copy.state  = part.state
+        copy.fill   = part.fill,
+        copy.border = part.border
+        copy.svg    = part.svg
+        return copy
     }
     cellsAround(arr){
         let aliveCount = 0

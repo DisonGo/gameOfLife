@@ -24,13 +24,13 @@ const CONFIG = {
             }
         },
         max: {
-            X: (aWidth-aWidth%(10*SIZE_MULTI)) / (10*SIZE_MULTI),
+            X: (aWidth-aWidth%(10*SIZE_MULTI))   / (10*SIZE_MULTI),
             Y: (aHeight-aHeight%(10*SIZE_MULTI)) / (10*SIZE_MULTI)
         }
     },
-    maxCount: (aHeight-aHeight%(10*SIZE_MULTI)) * (aWidth-aWidth%(10*SIZE_MULTI)) / (100*SIZE_MULTI),
-    maxX:(aWidth-aWidth%(10*SIZE_MULTI)) / (10*SIZE_MULTI),
-    maxY:(aHeight-aHeight%(10*SIZE_MULTI)) / (10*SIZE_MULTI)
+    maxCount:   (aHeight -   aHeight%(10*SIZE_MULTI)) * (aWidth-aWidth%(10*SIZE_MULTI)) / (100*SIZE_MULTI),
+    maxX:       (aWidth -    aWidth%(10*SIZE_MULTI))  / (10*SIZE_MULTI),
+    maxY:       (aHeight -   aHeight%(10*SIZE_MULTI)) / (10*SIZE_MULTI)
 }
 window.parts = []
 let main = document.getElementById("main")
@@ -85,36 +85,29 @@ function generateMap(){
 
 }
 function generateParts(num){
-    for (let i = 0,tryCount=0 ; i < num;tryCount++) {
+    for (let i = 0, tryCount = 0; i < num; tryCount++) {
         let x = getRandomRound(0,CONFIG.maxX -1)
         let y = getRandomRound(0,CONFIG.maxY -1)
         const arr = window.parts
-        // console.log(x,y);
         const part = arr[y][x]
-        if(!(typeof part === "undefined")){
+        if (!(typeof part === "undefined")) {
             part.switchStateTo("A")
             i++
         }
-        if(tryCount>num*10)break
+        if (tryCount>num*10) break
     }
-    // window.parts[0][0].switchStateTo("A")
-    // window.parts[0][1].switchStateTo("A")
-    // window.parts[0][2].switchStateTo("A")
-    // window.parts[0][3].switchStateTo("A")
 }
 function loop(){
-    this.int = setInterval(()=>{
+    window.simLoop = setInterval(()=>{
         let copy = copyPartArr(window.parts)
         copy.forEach((row, i) => row.forEach((part, j) => {
             let around = part.cellsAround(copy)
             if (part.aliveCheck()) {
-                if (!(around >= 2 && around <= 3)) {
+                if (!(around >= 2 && around <= 3))
                     window.parts[i][j].switchStateTo("D")
-                }
             } else {
-                if (around == 3) {
+                if (around == 3)
                     window.parts[i][j].switchStateTo("A")
-                }
             }
         }))
         copy = undefined
