@@ -46,14 +46,14 @@ class Point{
     }
 }
 class Particle{
-    constructor(cords){
+    constructor(cords) {
         let conf    = CONFIG.partConf
         this.conf   = conf
         this.cords  = new Point(cords.x,cords.y)
         this.w      = conf.size.w
         this.h      = conf.size.h
-        this.cords.x+= this.w / 2
-        this.cords.y+= this.h / 2
+        this.cords.x += this.w / 2
+        this.cords.y += this.h / 2
         this.X      = cords.x / CONFIG.sizeMulti / 10 
         this.Y      = cords.y / CONFIG.sizeMulti / 10
         this.state  = 0
@@ -61,17 +61,17 @@ class Particle{
         this.border = conf.border
         this.svg    = null
     }
-    createOn(ctx){
+    createOn(ctx) {
         let rect = ctx.makeRectangle(this.cords.x, this.cords.y, this.w, this.h)
-        if(this.fill.on)rect.fill = this.fill.color
-        if(this.border.on){
+        rect.fill = this.fill
+        if (this.border.on) {
             rect.linewidth = this.border.size
             rect.stroke = this.border.color
         }
         this.svg = rect
         return rect
     }
-    switchStateTo(state){
+    switchStateTo(state) {
         switch (state) {
             case "A":
                 this.state = 1
@@ -81,6 +81,7 @@ class Particle{
             case "D":
                 this.state = 0
                 this.fill = this.conf.state.dead.fill
+                // this.fill = getRandCSSColor()
                 this.refreshFill()
                 break;
             default:
@@ -89,12 +90,8 @@ class Particle{
         }
         this.refreshFill()
     }
-    outOfArr(x,y){
-        return (x < 0 || x > CONFIG.maxX - 1 || y < 0 || y > CONFIG.maxY - 1)
-    }
-    aliveCheck(){
-        return this.state
-    }
+    outOfArr    = (x,y) => (x < 0 || x > CONFIG.maxX - 1 || y < 0 || y > CONFIG.maxY - 1)
+    aliveCheck  = ()    => this.state
     static checkState(x, y, arr) {
         let maxX = arr[0].length
         let maxY = arr.length
@@ -109,7 +106,9 @@ class Particle{
         return arr[y][x].state
     }
     static copy(part) {
-        let copy = new Particle(new Point(part.X * CONFIG.sizeMulti * 10, part.Y * CONFIG.sizeMulti * 10))
+        let x = part.X * CONFIG.sizeMulti * 10,
+            y = part.Y * CONFIG.sizeMulti * 10
+        let copy = new Particle(new Point(x, y))
         copy.state  = part.state
         copy.fill   = part.fill,
         copy.border = part.border

@@ -6,9 +6,8 @@ const CONFIG = {
             w: 10 * SIZE_MULTI,
             h: 10 * SIZE_MULTI
         },
-        color: "black",
         fill: {
-            color:"black"
+            color:"white"
         },
         border: {
             on:true,
@@ -55,44 +54,38 @@ main.addEventListener('contextmenu',function(e){
 })
 function getRandomDec(min,max){
     let rnd = getRandomRound(min,max)
-    return rnd - rnd%(10*CONFIG.sizeMulti)
-}
-function checkAlive(){
-    window.parts.forEach((sub) => {
-        sub.filter((part)=>part.state.alive.on)
-    })
+    return rnd - rnd % (10 * CONFIG.sizeMulti)
 }
 function generateMap(){
     let maxX = CONFIG.maxX
     let maxY = CONFIG.maxY
+    let multi = CONFIG.sizeMulti
     let arr = window.parts
     for (let i = 0; i < maxY; i++) {
-        let Xarr = []
+        let row = []
         for (let j = 0; j < maxX; j++) {
-            let part = new Particle(new Point(j*CONFIG.sizeMulti*10,i*CONFIG.sizeMulti*10))
-            Xarr.push(part)
+            let cords = new Point(j * multi * 10,i * multi * 10)
+            let part = new Particle(cords)
+            row.push(part)
             let rect = part.createOn(deTwo)
             background.add(rect)
             deTwo.update()
-            rect._renderer.elem.addEventListener("click", function() {
-                part.switchStateTo()
-            })
+            rect._renderer.elem.addEventListener("click", () => part.switchStateTo())
         }       
-        arr.push(Xarr) 
+        arr.push(row) 
     }
 
 }
 function generateParts(num){
     for (let i = 0, tryCount = 0; i < num; tryCount++) {
-        let x = getRandomRound(0,CONFIG.maxX -1)
-        let y = getRandomRound(0,CONFIG.maxY -1)
+        let x = getRandomRound(0, CONFIG.maxX - 1)
+        let y = getRandomRound(0, CONFIG.maxY - 1)
         const arr = window.parts
         const part = arr[y][x]
-        if (!(typeof part === "undefined")) {
-            part.switchStateTo("A")
-            i++
-        }
-        if (tryCount>num*10) break
+        if (typeof part === "undefined") continue
+        part.switchStateTo("A")
+        i++
+        if (tryCount > num * 10) break
     }
 }
 let playLoop = 0
