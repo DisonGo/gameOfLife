@@ -1,4 +1,4 @@
-const SIZE_MULTI = 2
+const SIZE_MULTI = 3
 const CONFIG = {
     sizeMulti: SIZE_MULTI,
     partConf:{
@@ -12,7 +12,7 @@ const CONFIG = {
         },
         border: {
             on:true,
-            color:"white",
+            color:"black",
             size:1
         },
         state:{
@@ -75,10 +75,14 @@ function generateMap(){
     for (let i = 0; i < maxY; i++) {
         let Xarr = []
         for (let j = 0; j < maxX; j++) {
-            let part = new Particle(new Point(j*CONFIG.sizeMulti*10,i*CONFIG.sizeMulti*10))  
+            let part = new Particle(new Point(j*CONFIG.sizeMulti*10,i*CONFIG.sizeMulti*10))
             Xarr.push(part)
             let rect = part.createOn(deTwo)
             background.add(rect)
+            deTwo.update()
+            rect._renderer.elem.addEventListener("click", function() {
+                part.switchStateTo()
+            })
         }       
         arr.push(Xarr) 
     }
@@ -97,24 +101,34 @@ function generateParts(num){
         if (tryCount>num*10) break
     }
 }
+let playLoop = 0
+function Pause() {
+    playLoop = switchBool(playLoop)
+    StartBtn.innerText = playLoop ? "Stop" : "Play"
+}
+StartBtn.addEventListener("click", Pause)
+window.addEventListener("keypress", function(e) {
+    if (e.key == ' ') Pause() 
+})
 function loop(){
     window.simLoop = setInterval(()=>{
-        let copy = copyPartArr(window.parts)
-        copy.forEach((row, i) => row.forEach((part, j) => {
-            let around = part.cellsAround(copy)
-            if (part.aliveCheck()) {
-                if (!(around >= 2 && around <= 3))
-                    window.parts[i][j].switchStateTo("D")
-            } else {
-                if (around == 3)
-                    window.parts[i][j].switchStateTo("A")
-            }
-        }))
-        copy = undefined
-    },1000/60)
+        if (playLoop) {
+            let copy = copyPartArr(window.parts)
+            copy.forEach((row, i) => row.forEach((part, j) => {
+                let around = part.cellsAround(copy)
+                if (part.aliveCheck()) {
+                    if (!(around >= 2 && around <= 3))
+                        window.parts[i][j].switchStateTo("D")
+                } else {
+                    if (around == 3)
+                        window.parts[i][j].switchStateTo("A")
+                }
+            }))
+            copy = undefined
+        }
+    },1000/30)
 }
 function start(){
     generateMap()
-    generateParts(400)
     loop()
 }

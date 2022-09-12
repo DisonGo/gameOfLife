@@ -109,7 +109,7 @@ class Particle{
         return arr[y][x].state
     }
     static copy(part) {
-        let copy = new Particle(new Point(part.cords.x - 10, part.cords.y - 10))
+        let copy = new Particle(new Point(part.X * CONFIG.sizeMulti * 10, part.Y * CONFIG.sizeMulti * 10))
         copy.state  = part.state
         copy.fill   = part.fill,
         copy.border = part.border
