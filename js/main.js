@@ -50,12 +50,6 @@ svg.id = "svg"
 let background = deTwo.makeGroup()
 background.id = "Background"
 let started = false
-main.addEventListener('click',function(e){
-    if (!started) {
-        started = switchBool(started)
-        start()
-    }
-})
 main.addEventListener('contextmenu',function(e){
     e.preventDefault()
 })
@@ -132,3 +126,4 @@ function start(){
     generateMap()
     loop()
 }
+start()
