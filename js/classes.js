@@ -61,6 +61,48 @@ class Particle{
         this.border = conf.border
         this.svg    = null
     }
+    static checkState(x, y, arr) {
+        let maxX = arr[0].length
+        let maxY = arr.length
+        if (x >= maxX)
+            x = x % maxX
+        else if (x < 0)
+            x = maxX + x % maxX
+        if (y >= maxY)
+            y = y % maxY
+        else if (y < 0)
+            y = maxY + y % maxY
+        return arr[y][x]
+    }
+    static copy(part) {
+        let x = part.X * CONFIG.sizeMulti * 10,
+            y = part.Y * CONFIG.sizeMulti * 10
+        let copy = new Particle(new Point(x, y))
+        copy.state  = part.state
+        copy.fill   = part.fill,
+        copy.border = part.border
+        copy.svg    = part.svg
+        return copy
+    }
+    static getStateMap(arr) {
+        let map = []
+        arr.forEach(row => {
+            let newRow = []
+            row.forEach(part => newRow.push(part.state))
+            map.push(newRow)
+        });
+        return map
+    }
+    static copyPartArr(arr) {
+        if (!arr) return
+        let copy = []
+        arr.forEach(row => {
+            let newRow = []
+            row.forEach(part => newRow.push(Particle.copy(part)))
+            copy.push(newRow)
+        });
+        return copy
+    }
     createOn(ctx) {
         let rect = ctx.makeRectangle(this.cords.x, this.cords.y, this.w, this.h)
         rect.fill = this.fill
@@ -81,7 +123,7 @@ class Particle{
             case "D":
                 this.state = 0
                 this.fill = this.conf.state.dead.fill
-                // this.fill = getRandCSSColor()
+                this.fill = getRandCSSColor()
                 this.refreshFill()
                 break;
             default:
@@ -92,29 +134,6 @@ class Particle{
     }
     outOfArr    = (x,y) => (x < 0 || x > CONFIG.maxX - 1 || y < 0 || y > CONFIG.maxY - 1)
     aliveCheck  = ()    => this.state
-    static checkState(x, y, arr) {
-        let maxX = arr[0].length
-        let maxY = arr.length
-        if (x >= maxX)
-            x = x % maxX
-        else if (x < 0)
-            x = maxX + x % maxX
-        if (y >= maxY)
-            y = y % maxY
-        else if (y < 0)
-            y = maxY + y % maxY
-        return arr[y][x].state
-    }
-    static copy(part) {
-        let x = part.X * CONFIG.sizeMulti * 10,
-            y = part.Y * CONFIG.sizeMulti * 10
-        let copy = new Particle(new Point(x, y))
-        copy.state  = part.state
-        copy.fill   = part.fill,
-        copy.border = part.border
-        copy.svg    = part.svg
-        return copy
-    }
     cellsAround(arr){
         let aliveCount = 0
         let x = this.X

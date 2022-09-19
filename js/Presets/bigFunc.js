@@ -6,7 +6,10 @@ function getRandomRound(min, max) {
 }
 
 function getRandCSSColor() {
-    return "rgb(" + Math.floor(getRandom(0, 255)) + "," +Math.floor(getRandom(0, 255)) + "," +Math.floor(getRandom(0, 255)) + ")"
+    let r = Math.floor(getRandom(0, 255)),
+        g = Math.floor(getRandom(0, 255)),
+        b = Math.floor(getRandom(0, 255))
+    return `rgb(${r},${g},${b})`
 }
 function log(any){
     console.log(any);
@@ -31,7 +34,7 @@ function createTimerTo(node, totalTime) {
         m = m.toString().padStart(2, '0')
         s = s.toString().padStart(2, '0')
         h = h.toString().padStart(2, '0')
-        nTimer.innerHTML = h + ":" + m + ":" + s + ":" + ms + "\t " + totalTime
+        nTimer.innerText = `${h}:${m}:${s}:${ms}\t${totalTime}`
     }, 10)
 }
 function updateSizes(){
@@ -42,31 +45,5 @@ function resizeBody(){
     document.body.style.height = aHeight + "px";
     document.body.style.width = aWidth + "px";
 }
-function switchBool(x){
-    return !x
-}
-function copyPartArr(arr) {
-    let newArr = []
-    for (let i = 0; i < arr.length; i++) {
-        let sub = []
-        for (let j = 0; j < arr[i].length; j++) {
-            sub.push(Particle.copy(arr[i][j]));
-        }
-        newArr.push(sub)
-    }
-    return newArr
-}
-// function transorm_obj_to_bin_vector(obj){
-//     let newVector [];
-//     let newSubVec [];
-//     for(let i=0;i<obj.lenght;i++){
-//         if(obj.charCodeAt(i)!=10){
-//             if(obj.charCodeAt(i)==32)newSubVec.push(0)
-//             else newSubVec.push(1)
-//         }else{
-//             newVector.push(newSubVec)
-//             newSubVec = [];
-//         }
-//     }
-//     return newVector;
-// }
+switchBool = (x) => !x
+copySimpleArr = (arr) => structuredClone(arr);

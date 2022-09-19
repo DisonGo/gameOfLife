@@ -98,20 +98,22 @@ window.addEventListener("keypress", function(e) {
     if (e.key == ' ') Pause() 
 })
 function loop(){
+    const parts = window.parts
     window.simLoop = setInterval(()=>{
         if (playLoop) {
-            let copy = copyPartArr(window.parts)
-            copy.forEach((row, i) => row.forEach((part, j) => {
-                let around = part.cellsAround(copy)
+            let stateMap = Particle.getStateMap(window.parts)
+            stateMap.forEach((row, y) => row.forEach((a, x) => {
+                part = parts[y][x]
+                let around = part.cellsAround(stateMap)
                 if (part.aliveCheck()) {
                     if (!(around >= 2 && around <= 3))
-                        window.parts[i][j].switchStateTo("D")
+                        part.switchStateTo("D")
                 } else {
                     if (around == 3)
-                        window.parts[i][j].switchStateTo("A")
+                        part.switchStateTo("A")
                 }
             }))
-            copy = undefined
+            stateMap = undefined
         }
     },1000/30)
 }
