@@ -60,18 +60,15 @@ class Particle{
         this.fill   = conf.fill.color,
         this.border = conf.border
         this.svg    = null
+        this.aliveCount = 0
     }
     static checkState(x, y, arr) {
         let maxX = arr[0].length
         let maxY = arr.length
-        if (x >= maxX)
-            x = x % maxX
-        else if (x < 0)
-            x = maxX + x % maxX
-        if (y >= maxY)
-            y = y % maxY
-        else if (y < 0)
-            y = maxY + y % maxY
+        let signX = (x < 0) * maxX
+        let signY = (y < 0) * maxY
+        x = signX + x % maxX
+        y = signY + y % maxY
         return arr[y][x]
     }
     static copy(part) {
@@ -117,13 +114,13 @@ class Particle{
         switch (state) {
             case "A":
                 this.state = 1
+                this.aliveCount++;
                 this.fill = this.conf.state.alive.fill
                 this.refreshFill()
                 break;
             case "D":
                 this.state = 0
-                this.fill = this.conf.state.dead.fill
-                this.fill = getRandCSSColor()
+                this.fill = this.calculate_brightness_CSS()
                 this.refreshFill()
                 break;
             default:
@@ -131,6 +128,11 @@ class Particle{
                 break;
         }
         this.refreshFill()
+    }
+    calculate_brightness_CSS() {
+        let color_brightness = (25 - this.aliveCount) * 10
+        if (color_brightness <= 0) color_brightness = 0
+        return `rgb(${color_brightness},${color_brightness},${color_brightness})`
     }
     outOfArr    = (x,y) => (x < 0 || x > CONFIG.maxX - 1 || y < 0 || y > CONFIG.maxY - 1)
     aliveCheck  = ()    => this.state

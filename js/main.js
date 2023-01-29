@@ -16,7 +16,7 @@ const CONFIG = {
         },
         state:{
             alive:{
-                fill: "black"
+                fill: "rgb(30, 30, 30)"
             },
             dead:{
                 fill: "white"
